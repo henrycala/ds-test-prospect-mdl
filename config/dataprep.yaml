@@ -1,0 +1,18 @@
+﻿data:
+  base_dir: data/raw
+  customers: customers_(4).csv
+  noncustomers: noncustomers_(4).csv
+  usage_actions: usage_actions_(4).csv
+training:
+  test_size: 0.2
+  random_state: 42
+  model_params:
+    C: 1.0
+  use_pre_close_only: true
+tracking:
+  enabled: false
+  experiment_name: prospect-model
+output:
+  model_dir: models
+  model_filename: prospect_model.joblib
+  feature_metadata: feature_names.txt
