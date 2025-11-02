@@ -90,14 +90,10 @@ def standardize_text(text: str) -> str:
     text = re.sub(r"[_/&-]+", " ", text)
 
     # Remove punctuation and parentheses
-    text = re.sub(r"[^a-z\s]", "", text)
+    text = re.sub(r"[^a-z0-9\s]", "", text)
 
     # Collapse multiple spaces
     text = re.sub(r"\s+", " ", text).strip()
-
-    # sort words to merge variants like "finance banking" / "banking finance"
-    tokens = text.split()
-    text = " ".join(sorted(tokens))
 
     return text
 
