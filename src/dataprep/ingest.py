@@ -18,7 +18,7 @@ class RawDataSourcesConfig:
     absolute_paths: bool = False
 
     def resolve(self, key: str) -> Path:
-        base = Path(self.base_dir) if self.base_dir is str else self.base_dir
+        base = Path(self.base_dir) if isinstance(self.base_dir, str) else self.base_dir
         mapping: Dict[str, str] = {
             "customers": self.customers,
             "noncustomers": self.noncustomers,

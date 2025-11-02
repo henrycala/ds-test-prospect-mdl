@@ -4,17 +4,16 @@ from datetime import datetime
 
 
 @dataclass(frozen=True)
-class Customer:
+class CustomerMdl:
     id: int
     alexa_rank: float
     employee_range: str
     industry: str
     closedate: datetime | None
-    mrr: float
     
 
 @dataclass(frozen=True)
-class NonCustomer:
+class NonCustomerMdl:
     id: int
     alexa_rank: float
     employee_range: str
@@ -22,7 +21,7 @@ class NonCustomer:
 
 
 @dataclass(frozen=True)
-class UsageAction:
+class UsageActionMdl:
     id: int
     when_timestamp: datetime
     actions_crm_contacts: int
@@ -35,7 +34,7 @@ class UsageAction:
     users_email: int
 
 __all__ = [
-    "Customer",
-    "NonCustomer",
-    "UsageAction",
+    "CustomerMdl",
+    "NonCustomerMdl",
+    "UsageActionMdl",
 ]
