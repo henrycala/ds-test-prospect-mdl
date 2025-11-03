@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import joblib
 from sklearn.metrics import recall_score, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 logging.basicConfig(
     level=logging.INFO,               
@@ -52,9 +54,47 @@ class ComputeMetrics:
             print(f"\n=== {run_name} ===")
             pipeline = joblib.load(model_path)
             preds = pipeline.predict(df_pred)
+            probs = pipeline.predict_proba(df_pred)[:, 1]
 
             print(f"Recall at 20%: {recall_at_fraction(target, preds, 0.2)}")
             print(classification_report(target, preds, digits=3))
+
+            # === 1. Probability Density Plot ===
+            plt.figure(figsize=(8, 5))
+            sns.kdeplot(probs[target == 0], label="Target = 0", fill=True)
+            sns.kdeplot(probs[target == 1], label="Target = 1", fill=True)
+            plt.title(f"Probability Density by Target - {run_name}")
+            plt.xlabel("Predicted Probability")
+            plt.ylabel("Density")
+            plt.legend()
+            plt.grid(True)
+            plt.tight_layout()
+            plt.savefig(f"{run_name}_prob_density.png")
+            plt.close()
+
+            # === 2. Lift Chart ===
+            lift_df = pd.DataFrame({
+                "target": target.values,
+                "proba": probs
+            }).sort_values("proba", ascending=False).reset_index(drop=True)
+
+            lift_df["cum_positives"] = lift_df["target"].cumsum()
+            lift_df["perc_samples"] = (lift_df.index + 1) / len(lift_df)
+            lift_df["perc_positives"] = lift_df["cum_positives"] / lift_df["target"].sum()
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(lift_df["perc_samples"], lift_df["perc_positives"], label="Model")
+            plt.plot([0, 1], [0, 1], "--", color="gray", label="Random Model")
+            plt.title(f"Lift Chart - {run_name}")
+            plt.xlabel("Fraction of Samples (sorted by predicted probability)")
+            plt.ylabel("Fraction of True Positives Captured")
+            plt.legend()
+            plt.grid(True)
+            plt.tight_layout()
+            plt.savefig(f"{run_name}_lift_chart.png")
+            plt.close()
+
+            print(f"Plots saved")
 
 
 if __name__ == "__main__":
